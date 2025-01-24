@@ -3,8 +3,8 @@ name: cve-scan-runner
 on:
   workflow_dispatch:
 
-  schedule:
-    - cron: "17 23 * * *"
+  # schedule:
+  #   - cron: "17 23 * * *"
 
 env:
   # To see the script output in real time
@@ -12,7 +12,9 @@ env:
 
 jobs:
   scan-and-open-issues:
-    runs-on: ubuntu-20.04
+    runs-on:
+      - nscloud-ubuntu-20.04-amd64-4x16-with-features
+      - namespace-experiments:privileged
     timeout-minutes: 20
 
     steps:
