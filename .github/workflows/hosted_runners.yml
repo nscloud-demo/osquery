@@ -55,7 +55,7 @@ jobs:
   check_code_style:
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
 
     container:
       image: osquery/builder20.04:7e9ee0339
@@ -109,7 +109,7 @@ jobs:
   check_libraries_manifest:
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
 
     steps:
       - name: Clone the osquery repository
@@ -129,7 +129,7 @@ jobs:
     needs: [check_code_style, check_libraries_manifest]
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
 
     steps:
       - name: Clone the osquery repository
@@ -144,7 +144,7 @@ jobs:
 
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
 
     container:
       image: osquery/builder20.04:7e9ee0339
@@ -256,7 +256,7 @@ jobs:
 
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
 
     container:
       image: osquery/builder20.04:7e9ee0339
@@ -855,7 +855,7 @@ jobs:
   mergeable:
     runs-on:
       - nscloud-ubuntu-20.04-amd64-4x16-with-features
-      - namespace-experiments:privileged
+      - namespace-experiments:privileged;host-pid-namespace
     steps:
       - run: true
     needs:
