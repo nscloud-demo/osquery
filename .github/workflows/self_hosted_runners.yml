@@ -81,7 +81,7 @@ jobs:
         working-directory: ${{ steps.build_paths.outputs.BINARY }}
         run: |
           cmake -G "Unix Makefiles" \
-            -DOSQUERY_PACKAGE_VERSION=${{ env.OSQUERY_VERSION }} \
+            -DOOSQUERY_VERSION=${{ env.OSQUERY_VERSION }} \
             -DOSQUERY_TOOLCHAIN_SYSROOT:PATH="/usr/local/osquery-toolchain" \
             -DOSQUERY_ENABLE_FORMAT_ONLY=ON \
             "${{ steps.build_paths.outputs.SOURCE }}"
@@ -230,6 +230,7 @@ jobs:
 
         run: |
           cmake -G "Unix Makefiles" \
+            -DOOSQUERY_VERSION=${{ env.OSQUERY_VERSION }} \
             -DOSQUERY_NO_DEBUG_SYMBOLS=${{ steps.debug_symbols_settings.outputs.VALUE }} \
             -DOSQUERY_TOOLCHAIN_SYSROOT:PATH="/usr/local/osquery-toolchain" \
             -DCMAKE_BUILD_TYPE:STRING="${{ matrix.build_type }}" \
