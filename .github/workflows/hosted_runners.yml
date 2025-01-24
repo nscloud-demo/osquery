@@ -530,6 +530,13 @@ jobs:
         run: |
           rm -rf ${{ steps.build_paths.outputs.BINARY }}
 
+      - name: Breakpoint on failure
+        if: failure()
+        uses: namespacelabs/breakpoint-action@v0
+        with:
+          duration: 15m
+          authorized-users: edganiukov,hugosantos,n-g,htr,nichtverstehen,gmichelo
+
   # # The macOS build will only start once we know that the code
   # # has been properly formatted
   # build_macos:
