@@ -42,7 +42,7 @@ jobs:
   # issues and missing copyright headers
   check_code_style:
     runs-on:
-      - nscloud-ubuntu-20.04-amd64-4x16-with-features
+      - nscloud-ubuntu-20.04-arm64-4x16-with-features
       - namespace-experiments:privileged
 
     container:
@@ -95,7 +95,7 @@ jobs:
   # has been properly formatted
   build_linux:
     runs-on:
-      - nscloud-ubuntu-20.04-amd64-4x16-with-features
+      - nscloud-ubuntu-20.04-arm64-4x16-with-features
       - namespace-experiments:privileged
 
     container:
