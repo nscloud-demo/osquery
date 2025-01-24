@@ -81,6 +81,7 @@ jobs:
         working-directory: ${{ steps.build_paths.outputs.BINARY }}
         run: |
           cmake -G "Unix Makefiles" \
+            -DOSQUERY_PACKAGE_VERSION=${{ env.OSQUERY_VERSION }} \
             -DOSQUERY_TOOLCHAIN_SYSROOT:PATH="/usr/local/osquery-toolchain" \
             -DOSQUERY_ENABLE_FORMAT_ONLY=ON \
             "${{ steps.build_paths.outputs.SOURCE }}"

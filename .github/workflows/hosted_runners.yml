@@ -698,6 +698,7 @@ jobs:
             -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ steps.xcode_selector.outputs.DEPLOYMENT_TARGET }}" \
             -DCMAKE_BUILD_TYPE:STRING="${{ matrix.build_type }}" \
             -DOSQUERY_BUILD_TESTS=ON \
+            -DOSQUERY_PACKAGE_VERSION=${{ env.OSQUERY_VERSION }} \
             -DOSQUERY_NO_DEBUG_SYMBOLS=${{ steps.debug_symbols_settings.outputs.VALUE }} \
             ${{ steps.build_paths.outputs.SOURCE }}
 
