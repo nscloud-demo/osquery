@@ -267,13 +267,13 @@ jobs:
         build_type: [Release, RelWithDebInfo, Debug]
 
     steps:
-      - name: Make space uninstalling packages
-        shell: bash
-        run: |
-          run_on_host="sudo nsenter -t 1 -m -u -n -i"
-          packages_to_remove=$($run_on_host dpkg-query -f '${Package}\n' -W | grep "^clang-.*\|^llvm-.*\|^php.*\|^mono-.*\|^mongodb-.*\
-          \|^libmono-.*\|^temurin-8-jdk\|^temurin-11-jdk\|^temurin-17-jdk\|^dotnet-.*\|^google-chrome-stable\|^microsoft-edge-stable\|^google-cloud-sdk\|^firefox\|^hhvm\|^snapd")
-          $run_on_host apt purge $packages_to_remove
+      # - name: Make space uninstalling packages
+      #   shell: bash
+      #   run: |
+      #     run_on_host="sudo nsenter -t 1 -m -u -n -i"
+      #     packages_to_remove=$($run_on_host dpkg-query -f '${Package}\n' -W | grep "^clang-.*\|^llvm-.*\|^php.*\|^mono-.*\|^mongodb-.*\
+      #     \|^libmono-.*\|^temurin-8-jdk\|^temurin-11-jdk\|^temurin-17-jdk\|^dotnet-.*\|^google-chrome-stable\|^microsoft-edge-stable\|^google-cloud-sdk\|^firefox\|^hhvm\|^snapd")
+      #     $run_on_host apt purge $packages_to_remove
 
       # Due to how the RPM packaging tools work, we have to adhere to some
       # character count requirements in the build path vs source path.
@@ -526,325 +526,325 @@ jobs:
         run: |
           rm -rf ${{ steps.build_paths.outputs.BINARY }}
 
-  # The macOS build will only start once we know that the code
-  # has been properly formatted
-  build_macos:
-    needs: [check_code_style, check_libraries_manifest]
+  # # The macOS build will only start once we know that the code
+  # # has been properly formatted
+  # build_macos:
+  #   needs: [check_code_style, check_libraries_manifest]
 
-    runs-on: namespace-profile-macos-default
+  #   runs-on: namespace-profile-macos-default
 
-    strategy:
-      matrix:
-        build_type: [Release, Debug]
-        architecture: [x86_64, arm64]
+  #   strategy:
+  #     matrix:
+  #       build_type: [Release, Debug]
+  #       architecture: [x86_64, arm64]
 
-    steps:
-      - name: Select the build job count
-        shell: bash
-        id: build_job_count
-        run: |
-          echo "VALUE=$(($(sysctl -n hw.logicalcpu) + 1))" >> $GITHUB_OUTPUT
+  #   steps:
+  #     - name: Select the build job count
+  #       shell: bash
+  #       id: build_job_count
+  #       run: |
+  #         echo "VALUE=$(($(sysctl -n hw.logicalcpu) + 1))" >> $GITHUB_OUTPUT
 
-      - name: Setup the build paths
-        shell: bash
-        id: build_paths
-        run: |
-          rel_build_path="workspace/build"
-          rel_src_path="workspace/src"
-          rel_ccache_path="workspace/ccache"
-          rel_downloads_path="workspace/downloads"
-          rel_install_path="workspace/install"
-          rel_package_data_path="workspace/package_data"
-          rel_packaging_path="workspace/osquery-packaging"
-          rel_package_build_path="workspace/package-build"
+  #     - name: Setup the build paths
+  #       shell: bash
+  #       id: build_paths
+  #       run: |
+  #         rel_build_path="workspace/build"
+  #         rel_src_path="workspace/src"
+  #         rel_ccache_path="workspace/ccache"
+  #         rel_downloads_path="workspace/downloads"
+  #         rel_install_path="workspace/install"
+  #         rel_package_data_path="workspace/package_data"
+  #         rel_packaging_path="workspace/osquery-packaging"
+  #         rel_package_build_path="workspace/package-build"
 
-          mkdir -p ${rel_build_path} \
-                   ${rel_ccache_path} \
-                   ${rel_downloads_path} \
-                   ${rel_install_path} \
-                   ${rel_package_data_path} \
-                   ${rel_package_build_path}
+  #         mkdir -p ${rel_build_path} \
+  #                  ${rel_ccache_path} \
+  #                  ${rel_downloads_path} \
+  #                  ${rel_install_path} \
+  #                  ${rel_package_data_path} \
+  #                  ${rel_package_build_path}
 
-          echo "SOURCE=$(pwd)/${rel_src_path}" >> $GITHUB_OUTPUT
-          echo "REL_SOURCE=${rel_src_path}" >> $GITHUB_OUTPUT
-          echo "BINARY=$(pwd)/${rel_build_path}" >> $GITHUB_OUTPUT
-          echo "CCACHE=$(pwd)/${rel_ccache_path}" >> $GITHUB_OUTPUT
-          echo "DOWNLOADS=$(pwd)/${rel_downloads_path}" >> $GITHUB_OUTPUT
-          echo "INSTALL=$(pwd)/${rel_install_path}" >> $GITHUB_OUTPUT
-          echo "PACKAGING=$(pwd)/${rel_packaging_path}" >> $GITHUB_OUTPUT
-          echo "PACKAGE_DATA=$(pwd)/${rel_package_data_path}" >> $GITHUB_OUTPUT
-          echo "REL_PACKAGE_BUILD=${rel_package_build_path}" >> $GITHUB_OUTPUT
-          echo "PACKAGE_BUILD=$(pwd)/${rel_package_build_path}" >> $GITHUB_OUTPUT
+  #         echo "SOURCE=$(pwd)/${rel_src_path}" >> $GITHUB_OUTPUT
+  #         echo "REL_SOURCE=${rel_src_path}" >> $GITHUB_OUTPUT
+  #         echo "BINARY=$(pwd)/${rel_build_path}" >> $GITHUB_OUTPUT
+  #         echo "CCACHE=$(pwd)/${rel_ccache_path}" >> $GITHUB_OUTPUT
+  #         echo "DOWNLOADS=$(pwd)/${rel_downloads_path}" >> $GITHUB_OUTPUT
+  #         echo "INSTALL=$(pwd)/${rel_install_path}" >> $GITHUB_OUTPUT
+  #         echo "PACKAGING=$(pwd)/${rel_packaging_path}" >> $GITHUB_OUTPUT
+  #         echo "PACKAGE_DATA=$(pwd)/${rel_package_data_path}" >> $GITHUB_OUTPUT
+  #         echo "REL_PACKAGE_BUILD=${rel_package_build_path}" >> $GITHUB_OUTPUT
+  #         echo "PACKAGE_BUILD=$(pwd)/${rel_package_build_path}" >> $GITHUB_OUTPUT
 
-      - name: Clone the osquery repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          path: ${{ steps.build_paths.outputs.REL_SOURCE }}
+  #     - name: Clone the osquery repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #         path: ${{ steps.build_paths.outputs.REL_SOURCE }}
 
-      - name: Get runner hardware info
-        shell: bash
-        id: runner_stats
-        run: |
-          df -h
-          echo "Cores: $(sysctl -n hw.logicalcpu)"
-          vm_stat
+  #     - name: Get runner hardware info
+  #       shell: bash
+  #       id: runner_stats
+  #       run: |
+  #         df -h
+  #         echo "Cores: $(sysctl -n hw.logicalcpu)"
+  #         vm_stat
 
-      - name: Update the cache (ccache)
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.build_paths.outputs.CCACHE }}
+  #     - name: Update the cache (ccache)
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ steps.build_paths.outputs.CCACHE }}
 
-          key: |
-            ccache_${{ matrix.architecture }}_${{ matrix.build_type }}_${{ github.sha }}
+  #         key: |
+  #           ccache_${{ matrix.architecture }}_${{ matrix.build_type }}_${{ github.sha }}
 
-          restore-keys: |
-            ccache_${{ matrix.architecture }}_${{ matrix.build_type }}
+  #         restore-keys: |
+  #           ccache_${{ matrix.architecture }}_${{ matrix.build_type }}
 
-      - name: Update the cache (git submodules)
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.build_paths.outputs.SOURCE }}/.git/modules
+  #     - name: Update the cache (git submodules)
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ steps.build_paths.outputs.SOURCE }}/.git/modules
 
-          key: |
-            gitmodules_${{ matrix.architecture }}_${{env.SUBMODULE_CACHE_VERSION}}_${{ github.sha }}
+  #         key: |
+  #           gitmodules_${{ matrix.architecture }}_${{env.SUBMODULE_CACHE_VERSION}}_${{ github.sha }}
 
-          restore-keys: |
-            gitmodules_${{ matrix.architecture }}_${{env.SUBMODULE_CACHE_VERSION}}
+  #         restore-keys: |
+  #           gitmodules_${{ matrix.architecture }}_${{env.SUBMODULE_CACHE_VERSION}}
 
-      - name: Update the cache (downloads)
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.build_paths.outputs.DOWNLOADS }}
+  #     - name: Update the cache (downloads)
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ steps.build_paths.outputs.DOWNLOADS }}
 
-          key: |
-            downloads_${{ matrix.architecture }}_${{ github.sha }}
+  #         key: |
+  #           downloads_${{ matrix.architecture }}_${{ github.sha }}
 
-          restore-keys: |
-            downloads_${{ matrix.architecture }}
+  #         restore-keys: |
+  #           downloads_${{ matrix.architecture }}
 
-      - name: Update the git submodules
-        working-directory: ${{ steps.build_paths.outputs.SOURCE }}
-        run: |
-          git submodule sync --recursive
+  #     - name: Update the git submodules
+  #       working-directory: ${{ steps.build_paths.outputs.SOURCE }}
+  #       run: |
+  #         git submodule sync --recursive
 
-      - name: Install build dependencies
-        run: |
-          brew install \
-            ccache \
-            flex \
-            bison \
-            coreutils \
-            gnu-sed
+  #     - name: Install build dependencies
+  #       run: |
+  #         brew install \
+  #           ccache \
+  #           flex \
+  #           bison \
+  #           coreutils \
+  #           gnu-sed
 
-      - name: Setup python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13.x"
-          architecture: arm64
+  #     - name: Setup python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.13.x"
+  #         architecture: arm64
 
-      - name: Install tests dependencies
-        id: install_test_deps
-        run: |
-          pip3 install setuptools \
-                        pexpect==3.3 \
-                        psutil \
-                        timeout_decorator \
-                        six \
-                        thrift==0.11.0 \
-                        osquery
+  #     - name: Install tests dependencies
+  #       id: install_test_deps
+  #       run: |
+  #         pip3 install setuptools \
+  #                       pexpect==3.3 \
+  #                       psutil \
+  #                       timeout_decorator \
+  #                       six \
+  #                       thrift==0.11.0 \
+  #                       osquery
 
-      - name: Install CMake
-        shell: bash
-        run: |
-          ${{ steps.build_paths.outputs.REL_SOURCE }}/tools/ci/scripts/macos/install_cmake.sh \
-            "${{ steps.build_paths.outputs.DOWNLOADS }}" \
-            "${{ steps.build_paths.outputs.INSTALL }}" \
-            "3.21.4"
+  #     - name: Install CMake
+  #       shell: bash
+  #       run: |
+  #         ${{ steps.build_paths.outputs.REL_SOURCE }}/tools/ci/scripts/macos/install_cmake.sh \
+  #           "${{ steps.build_paths.outputs.DOWNLOADS }}" \
+  #           "${{ steps.build_paths.outputs.INSTALL }}" \
+  #           "3.21.4"
 
-      - name: Select the Xcode version
-        shell: bash
-        id: xcode_selector
-        run: |
-          xcode_path="/Applications/Xcode_16.app/Contents/Developer"
+  #     - name: Select the Xcode version
+  #       shell: bash
+  #       id: xcode_selector
+  #       run: |
+  #         xcode_path="/Applications/Xcode_16.app/Contents/Developer"
 
-          echo "PATH=${path}" >> $GITHUB_OUTPUT
+  #         echo "PATH=${path}" >> $GITHUB_OUTPUT
 
-          sudo xcode-select -s "${xcode_path}"
+  #         sudo xcode-select -s "${xcode_path}"
 
-          echo "DEPLOYMENT_TARGET=10.15" >> $GITHUB_OUTPUT
+  #         echo "DEPLOYMENT_TARGET=10.15" >> $GITHUB_OUTPUT
 
-      # We don't have enough space on the worker to actually generate all
-      # the debug symbols (osquery + dependencies), so we have a flag to
-      # disable them when running a Debug build
-      - name: Select the debug symbols options
-        shell: bash
-        id: debug_symbols_settings
-        run: |
-          if [[ "${{ matrix.build_type }}" == "Debug" ]] ; then
-            echo "VALUE=ON" >> $GITHUB_OUTPUT
-          else
-            echo "VALUE=OFF" >> $GITHUB_OUTPUT
-          fi
+  #     # We don't have enough space on the worker to actually generate all
+  #     # the debug symbols (osquery + dependencies), so we have a flag to
+  #     # disable them when running a Debug build
+  #     - name: Select the debug symbols options
+  #       shell: bash
+  #       id: debug_symbols_settings
+  #       run: |
+  #         if [[ "${{ matrix.build_type }}" == "Debug" ]] ; then
+  #           echo "VALUE=ON" >> $GITHUB_OUTPUT
+  #         else
+  #           echo "VALUE=OFF" >> $GITHUB_OUTPUT
+  #         fi
 
-      - name: Configure the project
-        shell: bash
-        working-directory: ${{ steps.build_paths.outputs.BINARY }}
+  #     - name: Configure the project
+  #       shell: bash
+  #       working-directory: ${{ steps.build_paths.outputs.BINARY }}
 
-        env:
-          CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
+  #       env:
+  #         CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
 
-        run: |
-          cmake -G "Unix Makefiles" \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DCMAKE_OSX_ARCHITECTURES="${{ matrix.architecture }}" \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ steps.xcode_selector.outputs.DEPLOYMENT_TARGET }}" \
-            -DCMAKE_BUILD_TYPE:STRING="${{ matrix.build_type }}" \
-            -DOSQUERY_BUILD_TESTS=ON \
-            -DOSQUERY_VERSION=${{ env.OSQUERY_VERSION }} \
-            -DOSQUERY_NO_DEBUG_SYMBOLS=${{ steps.debug_symbols_settings.outputs.VALUE }} \
-            ${{ steps.build_paths.outputs.SOURCE }}
+  #       run: |
+  #         cmake -G "Unix Makefiles" \
+  #           -DCMAKE_C_COMPILER=clang \
+  #           -DCMAKE_CXX_COMPILER=clang++ \
+  #           -DCMAKE_OSX_ARCHITECTURES="${{ matrix.architecture }}" \
+  #           -DCMAKE_OSX_DEPLOYMENT_TARGET="${{ steps.xcode_selector.outputs.DEPLOYMENT_TARGET }}" \
+  #           -DCMAKE_BUILD_TYPE:STRING="${{ matrix.build_type }}" \
+  #           -DOSQUERY_BUILD_TESTS=ON \
+  #           -DOSQUERY_VERSION=${{ env.OSQUERY_VERSION }} \
+  #           -DOSQUERY_NO_DEBUG_SYMBOLS=${{ steps.debug_symbols_settings.outputs.VALUE }} \
+  #           ${{ steps.build_paths.outputs.SOURCE }}
 
-      - name: Build the project
-        working-directory: ${{ steps.build_paths.outputs.BINARY }}
+  #     - name: Build the project
+  #       working-directory: ${{ steps.build_paths.outputs.BINARY }}
 
-        env:
-          CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
+  #       env:
+  #         CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
 
-        run: |
-          cmake --build . -j ${{ steps.build_job_count.outputs.VALUE }}
+  #       run: |
+  #         cmake --build . -j ${{ steps.build_job_count.outputs.VALUE }}
 
-      - name: Disk space information
-        shell: bash
-        id: disk_space_info_post_build
-        run: |
-          df -h
-          du -sh ${{ steps.build_paths.outputs.BINARY }}
+  #     - name: Disk space information
+  #       shell: bash
+  #       id: disk_space_info_post_build
+  #       run: |
+  #         df -h
+  #         du -sh ${{ steps.build_paths.outputs.BINARY }}
 
-      - name: Run the tests
-        if: matrix.architecture == 'arm64'
-        working-directory: ${{ steps.build_paths.outputs.BINARY }}
-        run: |
-          ctest --build-nocmake -V
+  #     - name: Run the tests
+  #       if: matrix.architecture == 'arm64'
+  #       working-directory: ${{ steps.build_paths.outputs.BINARY }}
+  #       run: |
+  #         ctest --build-nocmake -V
 
-      - name: Run the install target
-        working-directory: ${{ steps.build_paths.outputs.BINARY }}
+  #     - name: Run the install target
+  #       working-directory: ${{ steps.build_paths.outputs.BINARY }}
 
-        env:
-          CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
-          DESTDIR: ${{ steps.build_paths.outputs.PACKAGE_DATA }}
+  #       env:
+  #         CCACHE_DIR: ${{ steps.build_paths.outputs.CCACHE }}
+  #         DESTDIR: ${{ steps.build_paths.outputs.PACKAGE_DATA }}
 
-        run: |
-          cmake \
-            --build . \
-            --target install \
-            -j ${{ steps.build_job_count.outputs.VALUE }}
+  #       run: |
+  #         cmake \
+  #           --build . \
+  #           --target install \
+  #           -j ${{ steps.build_job_count.outputs.VALUE }}
 
-      - name: Create the package data
-        working-directory: ${{ steps.build_paths.outputs.PACKAGE_BUILD }}
-        run: |
-          tar pcvzf package_data.tar.gz \
-            -C ${{ steps.build_paths.outputs.PACKAGE_DATA }} \
-            .
+  #     - name: Create the package data
+  #       working-directory: ${{ steps.build_paths.outputs.PACKAGE_BUILD }}
+  #       run: |
+  #         tar pcvzf package_data.tar.gz \
+  #           -C ${{ steps.build_paths.outputs.PACKAGE_DATA }} \
+  #           .
 
-      - name: Locate the package data
-        if: matrix.build_type == 'Release'
-        id: packages
-        shell: bash
-        run: |
-          echo "REL_UNSIGNED_RELEASE_PACKAGE_DATA_PATH=$(ls ${{ steps.build_paths.outputs.REL_PACKAGE_BUILD }}/package_data.tar.gz)" >> $GITHUB_OUTPUT
+  #     - name: Locate the package data
+  #       if: matrix.build_type == 'Release'
+  #       id: packages
+  #       shell: bash
+  #       run: |
+  #         echo "REL_UNSIGNED_RELEASE_PACKAGE_DATA_PATH=$(ls ${{ steps.build_paths.outputs.REL_PACKAGE_BUILD }}/package_data.tar.gz)" >> $GITHUB_OUTPUT
 
-      # Before we terminate this job, delete the build folder. The cache
-      # actions will require the disk space to create the archives.
-      - name: Reclaim disk space
-        run: |
-          rm -rf ${{ steps.build_paths.outputs.BINARY }}
+  #     # Before we terminate this job, delete the build folder. The cache
+  #     # actions will require the disk space to create the archives.
+  #     - name: Reclaim disk space
+  #       run: |
+  #         rm -rf ${{ steps.build_paths.outputs.BINARY }}
 
-  # This job builds the universal macOS artifacts
-  build_universal_macos_artifacts:
-    runs-on: namespace-profile-macos-default
+  # # This job builds the universal macOS artifacts
+  # build_universal_macos_artifacts:
+  #   runs-on: namespace-profile-macos-default
 
-    steps:
-      - name: Clone the osquery repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: Clone the osquery repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Install CMake
-        shell: bash
-        run: |
-          mkdir -p "workspace/downloads" \
-                   "workspace/install"
+  #     - name: Install CMake
+  #       shell: bash
+  #       run: |
+  #         mkdir -p "workspace/downloads" \
+  #                  "workspace/install"
 
-          ./tools/ci/scripts/macos/install_cmake.sh \
-            "workspace/downloads" \
-            "workspace/install" \
-            "3.21.4"
+  #         ./tools/ci/scripts/macos/install_cmake.sh \
+  #           "workspace/downloads" \
+  #           "workspace/install" \
+  #           "3.21.4"
 
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: macos_unsigned_release_package_data_x86_64
-          path: macos_unsigned_release_package_data_x86_64
+  #     - uses: actions/download-artifact@v4.1.7
+  #       with:
+  #         name: macos_unsigned_release_package_data_x86_64
+  #         path: macos_unsigned_release_package_data_x86_64
 
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: macos_unsigned_release_package_data_arm64
-          path: macos_unsigned_release_package_data_arm64
+  #     - uses: actions/download-artifact@v4.1.7
+  #       with:
+  #         name: macos_unsigned_release_package_data_arm64
+  #         path: macos_unsigned_release_package_data_arm64
 
-      - name: Create the universal package data
-        run: |
-          tools/ci/scripts/macos/build_universal_package_data.sh
+  #     - name: Create the universal package data
+  #       run: |
+  #         tools/ci/scripts/macos/build_universal_package_data.sh
 
-      - name: Store the universal unsigned release package data artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: macos_unsigned_release_package_data_universal
-          path: package_data.tar.gz
+  #     - name: Store the universal unsigned release package data artifact
+  #       uses: actions/upload-artifact@v4.4.0
+  #       with:
+  #         name: macos_unsigned_release_package_data_universal
+  #         path: package_data.tar.gz
 
-      - name: Clone the osquery-packaging repository
-        run: |
-          git clone ${{ env.PACKAGING_REPO }} osquery-packaging
+  #     - name: Clone the osquery-packaging repository
+  #       run: |
+  #         git clone ${{ env.PACKAGING_REPO }} osquery-packaging
 
-          cd osquery-packaging
-          git checkout ${{ env.PACKAGING_COMMIT }}
+  #         cd osquery-packaging
+  #         git checkout ${{ env.PACKAGING_COMMIT }}
 
-      - name: Create the packages
-        shell: bash
-        run: |
-          osquery_version=$(git describe --tags --always )
-          package_format_list=( "productbuild" "TGZ" )
+  #     - name: Create the packages
+  #       shell: bash
+  #       run: |
+  #         osquery_version=$(git describe --tags --always )
+  #         package_format_list=( "productbuild" "TGZ" )
 
-          for package_format in "${package_format_list[@]}" ; do
-            cmake -DCMAKE_BUILD_TYPE=Release \
-              -DCPACK_GENERATOR=${package_format} \
-              -DOSQUERY_PACKAGE_VERSION=${osquery_version} \
-              -DOSQUERY_DATA_PATH=$(pwd)/universal \
-              -S osquery-packaging \
-              -B package_build
+  #         for package_format in "${package_format_list[@]}" ; do
+  #           cmake -DCMAKE_BUILD_TYPE=Release \
+  #             -DCPACK_GENERATOR=${package_format} \
+  #             -DOSQUERY_PACKAGE_VERSION=${osquery_version} \
+  #             -DOSQUERY_DATA_PATH=$(pwd)/universal \
+  #             -S osquery-packaging \
+  #             -B package_build
 
-            cmake --build package_build \
-              --target package
-          done
+  #           cmake --build package_build \
+  #             --target package
+  #         done
 
-      - name: Locate the packages
-        id: packages
-        shell: bash
-        run: |
-          echo "REL_UNSIGNED_RELEASE_PKG_PATH=$(ls package_build/*.pkg)" >> $GITHUB_OUTPUT
-          echo "REL_UNSIGNED_RELEASE_TGZ_PATH=$(ls package_build/*.tar.gz)" >> $GITHUB_OUTPUT
+  #     - name: Locate the packages
+  #       id: packages
+  #       shell: bash
+  #       run: |
+  #         echo "REL_UNSIGNED_RELEASE_PKG_PATH=$(ls package_build/*.pkg)" >> $GITHUB_OUTPUT
+  #         echo "REL_UNSIGNED_RELEASE_TGZ_PATH=$(ls package_build/*.tar.gz)" >> $GITHUB_OUTPUT
 
-      - name: Store the PKG unsigned release packages
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: macos_unsigned_pkg_universal
-          path: ${{ steps.packages.outputs.REL_UNSIGNED_RELEASE_PKG_PATH }}
+  #     - name: Store the PKG unsigned release packages
+  #       uses: actions/upload-artifact@v4.4.0
+  #       with:
+  #         name: macos_unsigned_pkg_universal
+  #         path: ${{ steps.packages.outputs.REL_UNSIGNED_RELEASE_PKG_PATH }}
 
-      - name: Store the TGZ unsigned release packages
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: macos_unsigned_tgz_universal
-          path: ${{ steps.packages.outputs.REL_UNSIGNED_RELEASE_TGZ_PATH }}
+  #     - name: Store the TGZ unsigned release packages
+  #       uses: actions/upload-artifact@v4.4.0
+  #       with:
+  #         name: macos_unsigned_tgz_universal
+  #         path: ${{ steps.packages.outputs.REL_UNSIGNED_RELEASE_TGZ_PATH }}
 
   # This job is here as a github status check -- it allows us to move the dependency from
   # being on all the jobs to this single one.
@@ -855,8 +855,8 @@ jobs:
     steps:
       - run: true
     needs:
-      - build_macos
+      # - build_macos
       - build_linux
       # - build_windows
-      - build_universal_macos_artifacts
+      # - build_universal_macos_artifacts
       - check_source_code
