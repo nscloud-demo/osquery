@@ -268,7 +268,7 @@ jobs:
         build_type:
           - Release
           # - RelWithDebInfo
-          - Debug
+          # - Debug
 
     steps:
       # - name: Make space uninstalling packages

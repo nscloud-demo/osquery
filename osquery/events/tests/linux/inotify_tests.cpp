@@ -428,6 +428,11 @@ TEST_F(INotifyTests, test_inotify_event_action) {
   // Make sure the inotify action was expected.
   EXPECT_GT(sub->actions().size(), 0U);
   if (sub->actions().size() >= 2) {
+
+    for (const auto& action : sub->actions()) {
+      std::cout << action << std::endl;
+    }
+
     EXPECT_EQ(sub->actions()[0], "UPDATED");
   }
 
